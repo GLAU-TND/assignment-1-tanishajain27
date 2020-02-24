@@ -1,0 +1,390 @@
+import menu.Menu;
+public class Main {
+    public static void main(String[] args) {
+        boolean flag = true;
+        Menu menu = new Menu();
+        while (flag) {
+            int n = menu.showChoice();
+            switch (n) {
+                case 1:
+                    menu.addChoice();
+                    break;
+                case 2:
+                    menu.viewChoice();
+                    break;
+                case 3:
+                    menu.searchChoice();
+                    break;
+                case 4:
+                    menu.deleteChoice();
+                    break;
+                case 5:
+                    menu.exitChoice();
+                    flag = false;
+                    break;
+            }
+        }
+    }
+}
+package person;
+
+public class Person implements Comparable<Person> {
+
+    private String firstName;                   //First name of person
+    private String lastName;                    //Last name of person
+    private String emailID;                     //EmailId of person
+    private StringBuffer phoneNumbers;          //Phone numbers of person
+
+    //Getter for first name
+    public String getFirstName() {
+        return firstName;
+    }
+
+    //Setter for first name
+    public void setFirstName(String firstName) {
+        System.out.println(firstName);
+        this.firstName = firstName;
+    }
+
+    //Getter for last name
+    public String getLastName() {
+        return lastName;
+    }
+
+    //Setter for last name
+    public void setLastName(String lastName) {
+        System.out.println(lastName);
+        this.lastName = lastName;
+    }
+
+    //Getter for Email ID
+    public String getEmailID() {
+        return emailID;
+    }
+
+    //Setter for EmailID
+    public void setEmailID(String emailID) {
+        this.emailID = emailID;
+    }
+
+    //Getter for fetching all phone numbers
+    public StringBuffer getPhoneNumber() {
+        return this.phoneNumbers;
+    }
+
+    //Setter for inserting new phone numbers
+    public void setPhoneNumbers(String phoneNumber) {
+        if (phoneNumbers == null) {
+            this.phoneNumbers = new StringBuffer(phoneNumber);
+        } else {
+            this.phoneNumbers.append(", " + phoneNumber);
+        }
+    }
+
+    //toString method to show all phone numbers of person
+    @Override
+    public String toString() {
+        if (this.getEmailID() != "")
+            return "-------- * -------- * -------- * --------\n" +
+                    "First Name: " + this.getFirstName() + "\n" +
+                    "Last Name: " + this.getLastName() + "\n" +
+                    "Contact Number(s): " + getPhoneNumber() + "\n" +
+                    "Email address: " + this.getEmailID() + "\n" +
+                    "-------- * -------- * -------- * --------";
+        else
+
+            return "-------- * -------- * -------- * --------\n" +
+                    "First Name: " + this.getFirstName() + "\n" +
+                    "Last Name: " + this.getLastName() + "\n" +
+                    "Contact Number(s): " + getPhoneNumber() + "\n" +
+                    "-------- * -------- * -------- * --------";
+    }
+
+    //compareTo method for comparing objects of person class
+    @Override
+    public int compareTo(Person newPerson) {
+        return this.getFirstName().compareTo(newPerson.getFirstName());
+    }
+}
+package node;
+
+//Generic Node class
+public class Node<T> {
+    private T data;         //Data of node
+    private Node<T> next;   //Self referential data
+
+    //Getter for data
+    public T getData() {
+        return data;
+    }
+
+    //Setter for data
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    //Getter for self referential data
+    public Node<T> getNext() {
+        return next;
+    }
+
+    //Setter for self referential data
+    public void setNext(Node<T> next) {
+        this.next = next;
+    }
+
+    @Override
+    public String toString() {
+        return "Node{" +
+                "data=" + data +
+                '}';
+    }
+}
+
+package menu;
+
+import dataStructures.MyLinkedList;
+import node.Node;
+
+import person.Person;
+import java.util.Scanner;
+
+public class Menu {
+    private MyLinkedList<Person> linkedList;
+    private Scanner scan;
+
+    public Menu() {
+        scan = new Scanner(System.in);
+        linkedList = new MyLinkedList<>();
+    }
+
+    public int showChoice() {
+        System.out.println("Welcome to Devesh's Contact List App\n" +
+                "Press 1 to add a new contact\n" +
+                "Press 2 to view all contacts\n" +
+                "Press 3 to search for a contact\n" +
+                "Press 4 to delete a contact\n" +
+                "Press 5 to exit program");
+        return scan.nextInt();
+    }
+
+    public void addChoice() {
+        Person person = new Person();
+        String name;
+        System.out.println("You have chosen to add a new contact: \n" +
+                "Please enter the name of the Person\n");
+        scan.nextLine();
+
+        System.out.print("First Name: ");
+        name = scan.nextLine().trim();
+        person.setFirstName(name);
+
+        System.out.print("Last Name: ");
+        name = scan.nextLine().trim();
+        person.setLastName(name);
+
+        String number;
+        System.out.print("Contact Number: ");
+        number = scan.nextLine().trim();
+        person.setPhoneNumbers(number);
+
+        char c;
+        System.out.print("Would you like to add another contact number? (y/n): ");
+        c = scan.nextLine().trim().charAt(0);
+        while (c == 'y') {
+            System.out.print("Contact Number: ");
+            number = scan.nextLine().trim();
+            person.setPhoneNumbers(number);
+
+            System.out.print("Would you like to add another contact number? (y/n): ");
+            c = scan.nextLine().trim().charAt(0);
+        }
+
+
+        String email = null;
+        System.out.print("Would you like to add email address? (y/n): ");
+        c = scan.nextLine().trim().charAt(0);
+        if (c == 'y') {
+            System.out.print("Email Address: ");
+            email = scan.nextLine().trim();
+            person.setEmailID(email);
+            System.out.println("y");
+        } else {
+            person.setEmailID("");
+            System.out.println("n");
+        }
+
+        Node<Person> node =new Node<>();
+        node.setData(person);
+        linkedList.insert(node);
+    }
+
+    private void sortList(MyLinkedList<Person> linkedList){
+        linkedList.sort();
+    }
+
+    public void viewChoice() {
+        sortList(linkedList);
+        while(true){
+            Node<Person> node = linkedList.getObject();
+            if(node==null)
+                break;
+            System.out.println(node.getData());
+        }
+    }
+
+    public void searchChoice() {
+        int counter = 0;
+        System.out.print("You could search for a contact from their first names: ");
+        scan.nextLine();
+        String name = scan.nextLine().trim();
+
+        while(true){
+            Node<Person> node = linkedList.getObject();
+            if(node==null)
+                break;
+            if (node.getData().getFirstName().compareTo(name) == 0)
+                counter++;
+        }
+
+        System.out.println(counter + " match found!");
+        while(true){
+            Node<Person> node = linkedList.getObject();
+            if(node==null)
+                break;
+            if (node.getData().getFirstName().compareTo(name) == 0)
+                System.out.println(node.getData());
+        }
+    }
+
+    public void deleteChoice() {
+        System.out.println("Here are all your contacts:");
+        int i=1;
+        while(true){
+            Node<Person> node = linkedList.getObject();
+            if(node==null)
+                break;
+            System.out.println(i+". "+node.getData().getFirstName()+" "+node.getData().getLastName());
+            i++;
+        }
+        System.out.print("Press the number against the contact to delete it: ");
+        int position = scan.nextInt();
+        Person  person=linkedList.delete(position).getData();
+
+        System.out.println(person.getFirstName() + " " + person.getLastName() + "'s contact deleted from list!");
+    }
+
+    public void exitChoice() {
+        System.out.println("Exiting");
+    }
+}
+package dataStructures;
+
+import node.Node;
+
+public class MyLinkedList<T extends  Comparable<T>> {
+    private Node<T> head;           //It is the beginning of linked list
+    private Node<T> iter;           //It is used to iterate the list
+
+    public Node<T> getHead() {
+        return head;
+    }        //getter for head
+
+    public void setHead(Node<T> node) {
+        head = node;
+        iter = head;
+    }   //setter for head
+
+    public Node<T> getIter() {
+        return iter;
+    }                //Getter for iter
+
+    public void setIter(Node<T> iter) {
+        this.iter = iter;
+    }  //Setter for iter
+
+    //method to insert new node
+    public void insert(Node<T> node) {
+        if (getHead() == null) {
+            setHead(node);
+        } else {
+            Node<T> temp = head;
+            while (temp.getNext() != null) {
+                temp = temp.getNext();
+            }
+            temp.setNext(node);
+        }
+    }
+
+    //method to delete node from beginning
+    public Node<T> delete() {
+        if (isEmpty()) {
+            System.out.println("Underflow");
+            return null;
+        }
+        Node<T> temp = getHead();
+        setHead(getHead().getNext());
+        return temp;
+    }
+
+    //method to delete node at particular position
+    public Node<T> delete(int i) {
+        Node<T> deletedNode ;
+        Node<T> temp = getHead();
+        if (isEmpty()) {
+            System.out.println("Underflow");
+            return temp;
+        }
+        if (i == 1) {
+            deletedNode = getHead();
+            setHead(null);
+        } else {
+            for (int j = 1; j < i - 1; j++) {
+                temp = temp.getNext();
+            }
+            deletedNode = temp.getNext();
+            temp.setNext(temp.getNext().getNext());
+        }
+        return deletedNode;
+    }
+
+    //Helper method to check if linked list is empty or not
+    public boolean isEmpty() {
+        return head == null;
+    }
+
+    //Method to fetch object one by one
+    public Node<T> getObject() {
+
+        Node<T> temp;
+
+        if (getIter() == null && getHead() == null) {
+            System.out.println("List is empty");
+            return null;
+        } else if (getIter() == null) {
+            setIter(getHead());
+            return null;
+        }
+        temp = getIter();
+        setIter(getIter().getNext());
+        return temp;
+    }
+
+    //Method to sort linked list
+    public void sort(){
+        Node<T> pass1=getHead();
+        Node<T> pass2=getHead().getNext();
+
+        while(pass1!=null){
+            while(pass2!=null){
+                if(pass1.getData().compareTo(pass2.getData())>0){
+                    T temp = pass1.getData();
+                    pass1.setData(pass2.getData());
+                    pass2.setData(temp);
+                }
+                pass2=pass2.getNext();
+            }
+            pass1=pass1.getNext();
+        }
+    }
+}
